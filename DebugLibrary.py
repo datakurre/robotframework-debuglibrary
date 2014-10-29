@@ -56,6 +56,21 @@ class BaseCmd(cmd.Cmd):
 
         pass
 
+    def do_n(self, arg):
+        import pickle
+        import inspect
+        for frame in inspect.getouterframes(inspect.currentframe()):
+            kw = frame[0].f_locals.get('kw')
+            if kw is not None:
+                break
+        context = BuiltIn()._context
+        keywords = context.keywords[0].keywords._keywords
+        index = keywords.index(kw)
+        kw = pickle.loads(pickle.dumps(kw))
+        if len(keywords) > index + 2:
+            keywords.insert(index + 2, kw)
+        return True
+
     def do_exit(self, arg):
         '''Exit'''
 
